@@ -13,3 +13,6 @@ Method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
 - specify output directory (outside the input directory)
 - specify whether you want DDS files that are already normal DDS files to be copied over to your output directory too. This includes things like keypad graphics which only have one quality level.
 - if files with the same name are already found in the output directory, specify whether you want them to be overwritten or not
+
+## Legal
+Prey DDS Converter does not distribute copyrighted material, from Prey or otherwise, nor is it associated with the original rightsholders in any way. Use at your own risk, I've only been doing this for half a year.
