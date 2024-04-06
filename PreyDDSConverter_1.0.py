@@ -1,4 +1,4 @@
-# Prey DDS converter v1.0 by kirtlandswarbler
+# Prey DDS converter v1.0 by esertu a.k.a. kirtlandswarbler
 # method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
 
 import os
