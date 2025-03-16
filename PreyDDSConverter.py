@@ -394,13 +394,29 @@ def openDirs(state):
   else:
       convertButton.state(['disabled'])
 
-    
+# setting up the application icon
+# https://stackoverflow.com/questions/42474560/pyinstaller-single-exe-file-ico-image-in-title-of-tkinter-main-window
+datafile = "superprofessionalicon_a8C_icon.ico"
+if not hasattr(sys, "frozen"):
+    datafile = os.path.join(os.path.dirname(__file__), datafile)
+else:
+    datafile = os.path.join(sys.prefix, datafile)
+
+def resource_path(relative_path):    
+  try:       
+      base_path = sys._MEIPASS
+  except Exception:
+      base_path = os.path.abspath(".")
+
+  return os.path.join(base_path, relative_path)
+
+
 def guiRun():
   # setting up the window
   root.title("Prey .DDS converter")
   mainframe = ttk.Frame(root)
   mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-  root.iconbitmap("superprofessionalicon_a8C_icon.ico")
+  root.iconbitmap(default=resource_path(datafile))
   root.deiconify()
   
   rowN = 0
@@ -444,7 +460,7 @@ def guiRun():
   def alertWindow(fileName):
     ttk.Entry(root)   # something to interact with
     dlg = Toplevel(root)
-    dlg.iconbitmap("superprofessionalicon_a8C_icon.ico")
+    dlg.iconbitmap(default=resource_path(datafile))
     
     dlgF = ttk.Frame(dlg)
     dlgF.grid(column=0, row=0, sticky=(N, W, E, S))
