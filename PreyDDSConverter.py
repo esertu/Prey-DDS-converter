@@ -128,10 +128,12 @@ if len(sys.argv) > 1:
       manual = True
       
 if useGUI == False:
-    root.destroy() #destroying the tkinter root window if it's not needed in order to draw focus back to cmd
+  root.destroy() #destroying the tkinter root window if it's not needed in order to draw focus back to cmd
     
 # exiting out if the above encountered an error
 if exitConv == True:
+  print("Press enter to exit.")
+  input()
   sys.exit()
 
 if useGUI == False:
@@ -146,6 +148,8 @@ if useGUI == False:
     else:
       print(f"Directory {inputDir.get()} does not exist. Please try again with a different folder.")
       if arguments["input"] != False:
+        print("Press enter to exit.")
+        input()
         sys.exit()
 
   # setting output directory - if there are no system arguments this loops until a valid input directory has been found or is set to be created
@@ -159,6 +163,8 @@ if useGUI == False:
       if outputDir.get() == inputDir.get():
         print(f"Error: input and output directories cannot match. Please specify different output directory.")
         if arguments["output"] != False or arguments["input"] != False:
+          print("Press enter to exit.")
+          input()
           sys.exit()
       else:
         outputDirset = True
@@ -173,6 +179,8 @@ if useGUI == False:
       else:
         print("Error: input for output directory creation not recognized, please try again.")
         if arguments["output"] != False:
+          print("Press enter to exit.")
+          input()
           sys.exit()
 
   # checking how to proceed with broken and non-broken files
@@ -188,6 +196,8 @@ if useGUI == False:
     else:
       print("Error: input for copy procedure for non-broken files not recognized, please try again.")
       if arguments["copyall"] != False:
+        print("Press enter to exit.")
+        input()
         sys.exit()
 
   print("---------------------------")
