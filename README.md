@@ -8,13 +8,13 @@ Method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
 
 ## Usage
 - if not yet done: unpack game files, for example with [Evil Extractor](https://github.com/evilvasile/EvilExtractor) and the [pak decryption tool](https://sirkane.io/PreyConvert_003.7z) (direct link to .7z file, no guarantee for contents)
-- open the file with Python 3.0+
-  - either use system arguments, or use no system arguments and let the converter guide you through the process
-  - available system arguments:
-    - -input= : specify input directory where unconverted DDS files are located
-    - -output= : specify output directory (outside the input directory)
-    - -copyAll= : yes/no - specify whether you want DDS files that are already normal DDS files to be copied over to your output directory too. This includes things like keypad graphics which only have one quality level.
-    - -overwrite= : skipAll/overwriteAll - specify whether, if files with the same name are already found in the output directory, you want them to be overwritten or simply skipped
+- simply launch the exe to use the GUI. Alternatively, launch the cmd exe from cmd with system arguments to make your specifications or with the "-manual" argument to let the converter guide you through the process
+- available system arguments for the cmd exe:
+  - -input= : specify input directory where unconverted DDS files are located
+  - -output= : specify output directory (outside the input directory)
+  - -copyAll= : yes/no - specify whether you want DDS files that are already normal DDS files to be copied over to your output directory too. This includes things like keypad graphics which only have one quality level.
+  - -overwrite= : skipAll/overwriteAll - specify whether, if files with the same name are already found in the output directory, you want them to be overwritten or simply skipped
+  - -manual : runs the original v1.0 method of using this converter, guiding you through the process step-by-step with written instructions
 
 ## Legal
 Prey DDS Converter does not distribute copyrighted material, from Prey or otherwise, nor is it associated with the original rightsholders in any way. Use at your own risk.
