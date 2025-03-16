@@ -69,7 +69,7 @@ if len(sys.argv) > 1:
       else:
         print(f"Argument \"{argument}\" not recognized, valid inputs for overwrite: skipAll, overwriteAll")
         exitConv = True
-    if argument.lower().find("-copyall=") != -1:
+    elif argument.lower().find("-copyall=") != -1:
       inputCopiesArg = argument[argument.lower().find("-copyall=")+len("-copyall="):].lower().strip()
       if inputCopiesArg == "yes" or  inputCopiesArg == "no":
         arguments["copyall"] = True
