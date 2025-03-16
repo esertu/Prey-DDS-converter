@@ -2,6 +2,8 @@
 # method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
 # now with system arguments and a GUI
 
+print("Prey DDS converter v1.2")
+
 import os
 import sys
 from tkinter import *
@@ -15,6 +17,7 @@ from tkinter import messagebox
 # establishing the basics of the GUI
 root = Tk()
 root.withdraw() #hidden by default
+mainframe = ttk.Frame(root)
 
 ##################
 
@@ -52,8 +55,8 @@ def inputSan():
   return(retInput)
 
 # function that determines how to proceed when existing files are found - this is used three times so I've moved it up here to not clog up the script so much
-def proceedCheck():
-  print(f"Output file {outputFileNames[n]} already exists, please input how to proceed.")
+def proceedCheck(fileName):
+  print(f"Output file {fileName} already exists, please input how to proceed.")
   print("[s] - skip just this file")
   print("[sa] - skip all existing files (default)")
   print("[o] - overwrite just this file")
@@ -68,8 +71,6 @@ def proceedCheck():
 
 ##################
 # setting stuff up
-
-print("Prey DDS converter v1.2")
 
 exitConv = False
 manual = False #this will determine whether the script asks the user a bunch of questions if there are no system arguments supplied
@@ -129,6 +130,7 @@ if exitConv == True:
   sys.exit()
 
 if useGUI == False:
+  
   # setting input directory - if there are no system arguments this loops until a valid input directory has been found or is set to be created
   inputDirset = False
   while inputDirset == False:
@@ -273,7 +275,7 @@ def fileConvert():
                     if useGUI == True:
                       alertWindow(fileName)
                     else:
-                      proceedInput.set(proceedCheck())
+                      proceedInput.set(proceedCheck(fileName))
                 # if output file doesn't exist, or it exists but has been chosen to be overwritten, proceed with copying the file now
                 if proceedInput.get() != "s" and proceedInput.get() != "sa":
                   print(f"Copying nonbroken DDS file {fileName}")
@@ -311,7 +313,7 @@ def fileConvert():
                     if useGUI == True:
                       alertWindow(fileName)
                     else:
-                      proceedInput.set(proceedCheck())
+                      proceedInput.set(proceedCheck(fileName))
                 # if output file doesn't exist, or it exists but has been chosen to be overwritten, proceed with converting the file now
                 if (os.path.exists(outputFileFullPath) and proceedInput.get() != "s" and proceedInput.get() != "sa") or (os.path.exists(outputFileFullPath) == False):
                   print(f"Converting {outputFileNames[n]}")
@@ -357,20 +359,25 @@ def fileConvert():
           thisPath = path # saving the new path to be used at the very *end* of the operation since this script runs when it hits a .dds file, which means if we saved the path at the *start* it would put the first .dds file in a new folder into the old folder
 
   if convertedSomething == False: #if this is False, no correct files were found (set to True upon conversion or skip of file)
-    infoTitleLabel.config(foreground="red")
-    infoTextLabel.config(foreground="red")
-    infoTitle.set("Error:")
-    infoText.set("no convertable files were found!")
+    if useGUI == True:
+      infoTitleLabel.config(foreground="red")
+      infoTextLabel.config(foreground="red")
+      infoTitle.set("Error:")
+      infoText.set("no convertable files were found!")
     print("Error: no convertable files were found!")
   else:
-    infoTitleLabel.config(foreground="green")
-    infoTitle.set("Done!")
+    if useGUI == True:
+      infoTitleLabel.config(foreground="green")
+      infoTitle.set("Done!")
   print("Done!")
 
 
 ##################
 
 # GUI
+
+
+
 
 # getting the input/output directory and checking if everything is okay with the input+output directories
 def openDirs(state):
@@ -410,42 +417,37 @@ def resource_path(relative_path):
 
   return os.path.join(base_path, relative_path)
 
-
 def guiRun():
   # setting up the window
   root.title("Prey .DDS converter")
-  mainframe = ttk.Frame(root)
-  mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
   root.iconbitmap(default=resource_path(datafile))
-  root.deiconify()
-  
-  rowN = 0
+  mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
   # new row
-  rowN = rowN + 1
+  rowN = 1
   ttk.Label(mainframe, text="input path:").grid(column=1, row=rowN, sticky=E)
   ttk.Label(mainframe, textvariable=inputDir, background="lightGrey", width=40).grid(column=2, row=rowN, sticky=(W, E))
   ttk.Button(mainframe, text="browse", command=lambda:openDirs("input")).grid(column=3, row=rowN, sticky=W)
 
   # new row
-  rowN = rowN + 1
+  rowN = 2
   ttk.Label(mainframe, text="output path:").grid(column=1, row=rowN, sticky=E)
   ttk.Label(mainframe, textvariable=outputDir, background="lightGrey", width=40).grid(column=2, row=rowN, sticky=(W, E))
   ttk.Button(mainframe, text="browse", command=lambda:openDirs("output")).grid(column=3, row=rowN, sticky=W)
 
   # new row
-  rowN = rowN + 1
+  rowN = 3
   ttk.Checkbutton(mainframe, text='Copy all found DDS files to output directory, including non-broken ones?',variable=inputCopies,onvalue="2", offvalue="1").grid(column=2, columnspan=2, row=rowN, sticky=E)
 
   # new row
-  rowN = rowN + 1
+  rowN = 4
   global convertButton
   convertButton = ttk.Button(mainframe, text="Convert", command=fileConvert, state='disabled')
   convertButton.grid(column=3, row=rowN, sticky=W)
 
   # these labels display "input/output folder match" and "no files found" errors and "done!" message
   global infoTitleLabel
-  infoTitleLabel  = ttk.Label(mainframe, textvariable=infoTitle, wraplength=300, foreground="red")
+  infoTitleLabel = ttk.Label(mainframe, textvariable=infoTitle, wraplength=300, foreground="red")
   infoTitleLabel.grid(column=1, row=rowN, sticky=NE)
   global infoTextLabel
   infoTextLabel = ttk.Label(mainframe, textvariable=infoText, wraplength=300, foreground="red")
@@ -493,7 +495,7 @@ def guiRun():
       child.grid_configure(padx=5, pady=5)
 
   root.bind("<Return>", fileConvert)
-
+  root.deiconify()
   root.mainloop()
 
 
