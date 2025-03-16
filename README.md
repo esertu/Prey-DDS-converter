@@ -8,8 +8,8 @@ Method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
 
 ## Usage
 - if not yet done: unpack game files, for example with [Evil Extractor](https://github.com/evilvasile/EvilExtractor) and the [pak decryption tool](https://sirkane.io/PreyConvert_003.7z) (direct link to .7z file, no guarantee for contents)
-- simply launch the exe to use the GUI. Alternatively, launch the cmd exe from cmd with system arguments to make your specifications or with the "-manual" argument to let the converter guide you through the process
-- available system arguments for the cmd exe:
+- simply launch the exe to use the GUI.
+- Alternatively, launch the cmd exe from cmd with system arguments to make your specifications or with the "-manual" argument to let the converter guide you through the process. Available system arguments:
   - -input= : specify input directory where unconverted DDS files are located
   - -output= : specify output directory (outside the input directory)
   - -copyAll= : yes/no - specify whether you want DDS files that are already normal DDS files to be copied over to your output directory too. This includes things like keypad graphics which only have one quality level.
