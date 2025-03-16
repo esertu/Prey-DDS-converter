@@ -1,8 +1,21 @@
-# Prey DDS converter v1.0 by esertu a.k.a. kirtlandswarbler
+# Prey DDS converter v1.1 by esertu
 # method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
+# now with system arguments
 
 import os
 import sys
+
+##################
+
+# function that asks for user input and then returns a sanitized version of that input (lowercase, with leading/ending square brackets removed)
+def inputSan():
+  origInput = input()
+  retInput = origInput.lower().strip()
+  if retInput.startswith("[") == True:
+    retInput = retInput[1:]
+  if retInput.endswith("]") == True:
+    retInput = retInput[:-1]
+  return(retInput)
 
 # function that determines how to proceed when existing files are found - this is used three times so I've moved it up here to not clog up the script so much
 def proceedCheck():
@@ -11,8 +24,7 @@ def proceedCheck():
   print("[sa] - skip all existing files (default)")
   print("[o] - overwrite just this file")
   print("[oa] - overwrite all existing files")
-  proceedResult = input()
-  proceedResult = proceedResult.lower() # turning input all lowercase for easier matching
+  proceedResult = inputSan()
   if proceedResult == "":
     proceedResult = "sa"
   elif proceedResult != "s" and proceedResult != "sa" and proceedResult != "o" and proceedResult != "oa":
@@ -23,59 +35,109 @@ def proceedCheck():
 ##################
 # setting stuff up
 
-print("Prey DDS converter v1.0")
+print("Prey DDS converter v1.1")
 
 proceedInput = None
-# switching debug booleans to True if this is just a debug run
-if sys.argv:
-  for argument in sys.argv:
+exitConv = False
+arguments = {
+  "input": False,
+  "output": False,
+  "overwrite": False,
+  "copyall": False,
+} #dict collecting what arguments have been supplied
+
+# parsing system arguments
+if len(sys.argv) > 1:
+  for argument in sys.argv[1:]:
     if argument == "skipConverting":
       proceedInput = "s"
       print("*** Debug: skipping all conversions")
+    elif argument.find("-input=") != -1:
+      inputDir = argument[argument.find("-input=")+len("-input="):].strip()
+      arguments["input"] = True
+    elif argument.find("-output=") != -1:
+      outputDir = argument[argument.find("-output=")+len("-output="):].strip()
+      arguments["output"] = True
+    elif argument.find("-overwrite=") != -1:
+      overwriteArg = argument[argument.find("-overwrite=")+len("-overwrite="):].lower().strip()
+      if overwriteArg == "skipall" or overwriteArg == "overwriteall":
+        arguments["overwrite"] = True
+        if overwriteArg == "skipall":
+          proceedInput = "sa"
+        elif overwriteArg == "overwriteall":
+          proceedInput = "oa"
+      else:
+        print(f"Argument \"{argument}\" not recognized, valid inputs for overwrite: skipAll, overwriteAll")
+        exitConv = True
+    if argument.lower().find("-copyall=") != -1:
+      inputCopiesArg = argument[argument.lower().find("-copyall=")+len("-copyall="):].lower().strip()
+      if inputCopiesArg == "yes" or  inputCopiesArg == "no":
+        arguments["copyall"] = True
+        if inputCopiesArg == "yes":
+          inputCopies = "2" #yes copies
+        elif inputCopiesArg == "no":
+          inputCopies = "1" #no copies
+      else:
+        print(f"Argument \"{argument}\" not recognized, valid inputs for copyAll: yes, no")
+        exitConv = True
 
-# setting input directory - this loops until a valid input directory has been found or is set to be created
-inputdirset = False
-while inputdirset == False:
-  print("Please enter input directory below:")
-  inputdir = input()
-  if os.path.exists(inputdir):
-    inputdirset = True
+if exitConv == True:
+  sys.exit()
+
+# setting input directory - if there are no system arguments this loops until a valid input directory has been found or is set to be created
+inputDirset = False
+while inputDirset == False:
+  if arguments["input"] == False:
+    print("Please enter input directory below:")
+    inputDir = input()
+  if os.path.exists(inputDir):
+    inputDirset = True
   else:
-    print(f"Directory {inputdir} does not exist. Please try again with a different folder.")
+    print(f"Directory {inputDir} does not exist. Please try again with a different folder.")
+    if arguments["input"] != False:
+      sys.exit()
 
-# setting output directory - this loops until a valid input directory has been found or is set to be created
-outputdirset = False
-while outputdirset == False:
-  print("Please enter output directory below (not in Prey game folder):")
-  outputdir = input()
-  if os.path.exists(outputdir):
-    if outputdir == inputdir:
+# setting output directory - if there are no system arguments this loops until a valid input directory has been found or is set to be created
+outputDirset = False
+outputDirCreate = ""
+while outputDirset == False:
+  if arguments["output"] == False or outputDirCreate != "":
+    print("Please enter output directory below (not in Prey game folder):")
+    outputDir = input()
+  if os.path.exists(outputDir):
+    if outputDir == inputDir:
       print(f"Error: input and output directories cannot match. Please specify different output directory.")
+      if arguments["output"] != False or arguments["input"] != False:
+        sys.exit()
     else:
-      outputdirset = True
+      outputDirset = True
   else:
-    print(f"Directory {outputdir} does not exist. Do you want to proceed with the script, creating the folder in the process?")
-    print(f"[Y]es - create new folder {outputdir}")
+    print(f"Directory {outputDir} does not exist. Do you want to proceed with the script, creating the folder in the process?")
+    print(f"[Y]es - create new folder {outputDir}")
     print(f"[N]o - specify different output directory")
-    outputdircreate = input()
-    outputdircreate = outputdircreate.lower() # turning input all lowercase for easier matching
-    if outputdircreate == "y" or outputdircreate == "n":
-      if outputdircreate == "y":
-        outputdirset = True
+    outputDirCreate = inputSan()
+    if outputDirCreate == "y" or outputDirCreate == "n":
+      if outputDirCreate == "y":
+        outputDirset = True
     else:
-      print("Error: input not recognized, please try again.")
+      print("Error: input for output directory creation not recognized, please try again.")
+      if arguments["output"] != False:
+        sys.exit()
 
 # checking how to proceed with broken and non-broken files
-copyproceedset = False
-while copyproceedset == False:
-  print("Would you like to have all readable .dds files in one place after running this script, including the non-broken ones shipped with the game?")
-  print("[1] - no, keep everything as it is.")
-  print("[2] - yes, copy all non-broken .dds files to the output directory.")
-  inputCopies = input()
+copyProceedSet = False
+while copyProceedSet == False:
+  if arguments["copyall"] == False:
+    print("Would you like to have all readable .dds files in one place after running this script, including the non-broken ones shipped with the game?")
+    print("[1] - no, keep everything as it is.")
+    print("[2] - yes, copy all non-broken .dds files to the output directory.")
+    inputCopies = inputSan()
   if inputCopies == "1" or inputCopies == "2":
-    copyproceedset = True
+    copyProceedSet = True
   else:
-    print("Error: input not recognized, please try again.")
+    print("Error: input for copy procedure for non-broken files not recognized, please try again.")
+    if arguments["copyall"] != False:
+      sys.exit()
 
 print("---------------------------")
 
@@ -92,7 +154,7 @@ highestNumberDotA = 0
 skipConverting = False
 
 # iterating through the given input directory
-for path, dirs, files in os.walk(inputdir):
+for path, dirs, files in os.walk(inputDir):
   for file in files:
   
     # checking what extension this file has starts here
@@ -136,8 +198,8 @@ for path, dirs, files in os.walk(inputdir):
             # now we can copy and edit the revelant info into from the previous DDS file and its associated highest number file into a new file in the output directory
             
             # creating the output folder based on input folder architecture
-            folderToCreate = thisPath.replace(inputdir,"") # cutting away the path to the root input folder so that all that remains is ie "\GameSDK\GameData\Libs\UI\Textures\danielle_note_images"
-            folderToCreate = outputdir + folderToCreate # adding that to the output directory path
+            folderToCreate = thisPath.replace(inputDir,"") # cutting away the path to the root input folder so that all that remains is ie "\GameSDK\GameData\Libs\UI\Textures\danielle_note_images"
+            folderToCreate = outputDir + folderToCreate # adding that to the output directory path
             # creating the resulting folder if it doesn't already exist
             if not os.path.isdir(folderToCreate):
               os.makedirs(folderToCreate)
@@ -233,12 +295,9 @@ for path, dirs, files in os.walk(inputdir):
 
 ##################
 
-
 print("---------------------------")
 print("Done! Press enter to exit.")
 input()
-
-
 
 ##################
 
