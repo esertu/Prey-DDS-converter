@@ -9,7 +9,7 @@ Method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
 ## Usage
 - if not yet done: unpack game files, for example with [Evil Extractor](https://github.com/evilvasile/EvilExtractor) and the [pak decryption tool](https://sirkane.io/PreyConvert_003.7z) (direct link to .7z file, no guarantee for contents)
 - open the file with Python 3.0+
-  - either use system arguments, or use no system arguments and let file guide you through the process
+  - either use system arguments, or use no system arguments and let the converter guide you through the process
   - available system arguments:
     - -input= : specify input directory where unconverted DDS files are located
     - -output= : specify output directory (outside the input directory)
