@@ -2,7 +2,8 @@
 # method originally devised by HeliosAI and not a russian spy on the XeNTaX forums
 # now with system arguments and a GUI
 
-print("Prey DDS converter v1.2")
+versionNumber = "1.3"
+print(f"Prey DDS converter v{versionNumber}")
 
 import os
 import sys
@@ -17,6 +18,7 @@ from tkinter import messagebox
 # establishing the basics of the GUI
 root = Tk()
 root.withdraw() #hidden by default
+
 mainframe = ttk.Frame(root)
 
 ##################
@@ -124,13 +126,15 @@ if len(sys.argv) > 1:
     elif argument.lower().find("-manual") != -1:
       useGUI = False
       manual = True
-
+      
+if useGUI == False:
+    root.destroy() #destroying the tkinter root window if it's not needed in order to draw focus back to cmd
+    
 # exiting out if the above encountered an error
 if exitConv == True:
   sys.exit()
 
 if useGUI == False:
-  
   # setting input directory - if there are no system arguments this loops until a valid input directory has been found or is set to be created
   inputDirset = False
   while inputDirset == False:
@@ -419,7 +423,8 @@ def resource_path(relative_path):
 
 def guiRun():
   # setting up the window
-  root.title("Prey .DDS converter")
+  titleSt = "Prey .DDS converter v" + versionNumber
+  root.title(titleSt)
   root.iconbitmap(default=resource_path(datafile))
   mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
